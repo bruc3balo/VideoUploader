@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VideoUploader</string>
+    <string name="app_name">Video Uploader</string>
     <string name="you_don_t_have_an_account_n_click_here_to_create_one">You don\'t have an account? \n Click here to create one</string>
     <string name="already_have_an_acc">Already have an account? \n Click here</string>
     <string name="password">Password</string>

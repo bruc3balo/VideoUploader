@@ -35,4 +35,12 @@
     <color name="fall">#773B28</color>
     <color name="winter">#6200EA</color>
     <color name="spring">#00BFA5</color>
+    
+    
+    <!-- SplashColors -->
+    <color name="Gulf_Blue">#03045E</color>
+    <color name="Deep_Cerulean">#0077B6</color>
+    <color name="Cerulean">#00B4D8</color>
+    <color name="Spray">#90E0EF</color>
+    <color name="Humming_Bird">#CAF0F8</color>
 </resources>

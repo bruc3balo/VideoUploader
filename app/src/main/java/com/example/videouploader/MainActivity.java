@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
         mainTitleTb.setTitle(underlineString(getResources().getString(R.string.app_name)));
         setSupportActionBar(mainTitleTb);
 
-
-        Toast.makeText(MainActivity.this, String.valueOf(getUserStatus(MainActivity.this)), Toast.LENGTH_SHORT).show();
-
         backPressed = false;
     }
 
@@ -78,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private void logout() {
         FirebaseAuth.getInstance().signOut();
         //clearUserDetails();
-        updateUi(FirebaseAuth.getInstance().getCurrentUser());
+        //updateUi(FirebaseAuth.getInstance().getCurrentUser());
     }
 
     private void goToAddPage() {
@@ -136,11 +133,25 @@ public class MainActivity extends AppCompatActivity {
         no.setOnClickListener(v -> d.dismiss());
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
         backPressed = false;
+    }
+
+    FirebaseAuth.AuthStateListener authStateListener = firebaseAuth -> updateUi(firebaseAuth.getCurrentUser());
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
     }
 
     @Override
