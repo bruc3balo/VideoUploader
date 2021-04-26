@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loginCoordinator"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".login.LoginActivity">
+
+    <LinearLayout
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/loginTb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@drawable/gradient_list"
+            app:titleTextColor="@color/white"
+            app:navigationIcon="@drawable/ic_lock"
+            app:title="Login"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="50dp"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="20dp">
+
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_marginTop="20dp"
+                            android:layout_marginBottom="20dp"
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textColor="@color/teal_700"
+                                android:textStyle="bold"
+                                android:text="Enter credentials to continue"
+                                android:padding="5dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"/>
+
+                            <FrameLayout
+                                android:nestedScrollingEnabled="false"
+                                android:id="@+id/loginFrame"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_margin="5dp"/>
+
+
+                            <TextView
+                                android:id="@+id/changeFrameTv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textColor="@android:color/holo_red_light"
+                                android:textStyle="bold"
+                                android:text="@string/you_don_t_have_an_account_n_click_here_to_create_one"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"/>
+
+                            <Button
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="10dp"
+                                android:elevation="2dp"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:text="Or Use Google"
+                                android:backgroundTint="@color/primaryVariant"
+                                android:textStyle="bold|italic"
+                                android:textColor="@color/white"
+                                android:textSize="18sp"
+                                android:fontFamily="@font/roboto"
+                                android:drawableEnd="@drawable/ic_google_m"
+                                android:background="@drawable/search_bg"
+                                android:layout_gravity="center" />
+
+                            <Button
+                                android:id="@+id/skipTv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textColor="@android:color/darker_gray"
+                                android:textStyle="bold|italic"
+                                android:text=" Skip >>"
+                                android:background="@drawable/list_bg"
+                                android:padding="10dp"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"/>
+
+                        </LinearLayout>
+                    </ScrollView>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loginProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:progressTint="@color/black"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

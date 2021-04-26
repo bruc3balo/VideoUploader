@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "924345590382",
+    "project_id": "videouploader-a685d",
+    "storage_bucket": "videouploader-a685d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924345590382:android:10996aab9ef3eddc397c7f",
+        "android_client_info": {
+          "package_name": "com.example.videouploader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924345590382-v948f1jumllebvclvacthjd11893odpq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbYQR8vycehNU4KVtu4g38wsEmHKsVvhc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924345590382-v948f1jumllebvclvacthjd11893odpq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

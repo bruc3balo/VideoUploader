@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">VideoUploader</string>
+    <string name="you_don_t_have_an_account_n_click_here_to_create_one">You don\'t have an account? \n Click here to create one</string>
+    <string name="already_have_an_acc">Already have an account? \n Click here</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="create">Create</string>
+    <string name="title">Title</string>
+    <string name="to_be_filled">-</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="adding_new_mdeia">Adding New Media</string>
+    <string name="get_media">Get Media</string>
+    <string name="description">Description</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="exit_app">You want to exit the application?</string>
+    <string name="press_back">Press back to exit</string>
+    <string name="profile">Profile</string>
+    <string name="cancel">Cancel</string>
+    <string name="get_from_gallery">Get From Gallery</string>
+    <string name="remove_image">Remove Image</string>
+    <string name="discard">Discard?</string>
+    <string name="friends">Friends</string>
+    <string name="follow">Follow</string>
+</resources>

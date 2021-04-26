@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bottom_sheet_bg"
+    android:layout_gravity="bottom"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+        <ImageButton
+            android:id="@+id/sheet_drag_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:tint="@color/semiBlack"
+            android:background="@android:color/transparent"
+            android:src="@drawable/line_ic"/>
+
+        <TextView
+            android:id="@+id/infoDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:fontFamily="serif"
+            android:padding="4dp"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="@string/to_be_filled"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_gravity="center"
+            android:background="@color/semiGray"/>
+
+        <TextView
+            android:id="@+id/actionTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/roboto"
+            android:padding="4dp"
+            android:textSize="18sp"
+
+            android:gravity="center_vertical"
+            android:text="@string/get_from_gallery"
+            android:textColor="@color/red"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/removeTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/roboto"
+            android:padding="4dp"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            android:text="@string/remove_image"
+            android:textColor="@color/red"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/cancelDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/roboto"
+            android:padding="4dp"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            android:text="@string/cancel"
+            android:textColor="@color/grey"
+            android:textStyle="bold" />
+
+
+
+</LinearLayout>
