@@ -1,13 +1,15 @@
 package com.example.videouploader;
 
-import android.app.Dialog;
+import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
-import android.view.MotionEvent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
@@ -16,22 +18,38 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.videouploader.adapter.ProfileMediaAdapter;
+import com.example.videouploader.services.UploadingProfilePictureService;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED;
+import static com.example.videouploader.AddMedia.STORAGE_PERMISSION_CODE;
+import static com.example.videouploader.AddMedia.getExtension;
+import static com.example.videouploader.AddMedia.getFileName;
+import static com.example.videouploader.login.LoginActivity.getUserSpMap;
+import static com.example.videouploader.models.Models.Media.MEDIA_TYPE;
+import static com.example.videouploader.models.Models.Media.USERNAME;
+import static com.example.videouploader.models.Models.User.COVER_IMAGE;
+import static com.example.videouploader.models.Models.User.PROFILE_PIC;
+import static com.example.videouploader.models.Models.User.USER_DB;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -41,6 +59,19 @@ public class ProfileActivity extends AppCompatActivity {
 
     float xFinger = 0;
     float yFinger = 0;
+
+    private RoundedImageView user_profile_picture;
+    private CircleImageView profilePic;
+    private Uri file = null;
+
+    private static final int coverCode = 0;
+    private static final int profileCode = 1;
+
+    private String profileInfo = "Changing Profile Picture";
+    private String coverInfo = "Changing cover image";
+
+    private String coverImageUrl = "";
+    private String profilePicUrl = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,20 +83,18 @@ public class ProfileActivity extends AppCompatActivity {
         profile_toolbar.setNavigationOnClickListener(v -> finish());
 
         LinearLayout profileDataLayout = findViewById(R.id.profileDataLayout);
-
-
-        CircleImageView profilePic = findViewById(R.id.profilePic);
+        profilePic = findViewById(R.id.profilePic);
         profilePic.setLongClickable(true);
         profilePic.setOnLongClickListener(v -> {
-            showPictureDialog(profilePic,"Changing Profile Picture");
+            showPictureDialog(profilePic, profileInfo);
             return false;
         });
         Glide.with(this).load(vader).into(profilePic);
 
-        RoundedImageView user_profile_picture = findViewById(R.id.user_profile_picture);
+        user_profile_picture = findViewById(R.id.user_profile_picture);
         user_profile_picture.setLongClickable(true);
         user_profile_picture.setOnLongClickListener(v -> {
-            showPictureDialog(user_profile_picture,"Changing cover image");
+            showPictureDialog(user_profile_picture, coverInfo);
             return false;
         });
         Glide.with(this).load(warden).into(user_profile_picture);
@@ -110,6 +139,9 @@ public class ProfileActivity extends AppCompatActivity {
         TextView email_profile_tv = findViewById(R.id.email_profile_tv);
         email_profile_tv.setText(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail());
 
+        TextView profileUsernameTv = findViewById(R.id.profileUsernameTv);
+        profileUsernameTv.setText(getUserSpMap(ProfileActivity.this).get(USERNAME));
+
         getWindow().setStatusBarColor(Color.BLACK);
     }
 
@@ -129,10 +161,62 @@ public class ProfileActivity extends AppCompatActivity {
         view.requestLayout();
     }
 
+    private void changeProfilePicture() {
+        startService(new Intent(ProfileActivity.this, UploadingProfilePictureService.class).putExtra(PROFILE_PIC, String.valueOf(file)).putExtra(MEDIA_TYPE, PROFILE_PIC));
+        System.out.println("data is 1 "+file);
+    }
 
-    private void showPictureDialog (View v , String info) {
+    private void changeProfileBackground() {
+        startService(new Intent(ProfileActivity.this, UploadingProfilePictureService.class).putExtra(COVER_IMAGE, String.valueOf(file)).putExtra(MEDIA_TYPE, COVER_IMAGE));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        switch (requestCode) {
+            case coverCode:
+                if (resultCode == RESULT_OK) {
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        try {
+                            assert data != null;
+                            user_profile_picture.setImageURI(data.getData());
+                            file = data.getData();
+                            changeProfileBackground();
+                            System.out.println("Extension is " + getExtension(getFileName(data.getData(), ProfileActivity.this)));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, 1000);
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Cover request cancelled", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case profileCode:
+                if (resultCode == RESULT_OK) {
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        try {
+                            assert data != null;
+                            profilePic.setImageURI(data.getData());
+                            file = data.getData();
+                            changeProfilePicture();
+                            System.out.println("Extension is " + getExtension(getFileName(data.getData(), ProfileActivity.this)));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, 1000);
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Profile Image request cancelled", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void showPictureDialog(View v, String info) {
         v.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
-        BottomSheetDialog d = new BottomSheetDialog(ProfileActivity.this,R.style.SheetDialog);
+        BottomSheetDialog d = new BottomSheetDialog(ProfileActivity.this, R.style.SheetDialog);
         d.setCancelable(false);
         d.setCanceledOnTouchOutside(true);
         d.setDismissWithAnimation(true);
@@ -145,56 +229,116 @@ public class ProfileActivity extends AppCompatActivity {
         d.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         d.show();
         d.setOnDismissListener(dialog -> v.setBackgroundTintList(null));
-        ImageButton sheet_drag_button = d.findViewById(R.id.sheet_drag_button);
-        /*sheet_drag_button.setOnTouchListener((v14, event) -> {
-            switch (event.getActionMasked()) {
-                case MotionEvent.ACTION_DOWN:
 
-                    xFinger = event.getX();
-                    yFinger = event.getY();
-
-                    break;
-
-                case MotionEvent.ACTION_MOVE:
-                    float fingerMovedX, fingerMovedY;
-                    fingerMovedX = event.getX();
-                    fingerMovedY = event.getY();
-
-                    float distanceX = fingerMovedX - xFinger;
-                    float distanceY = fingerMovedY - yFinger;
-
-
-
-                    float newY = d.getBehavior().getPeekHeight() + distanceY;
-
-                    d.getBehavior().setPeekHeight((int) newY,true);
-
-
-
-                    break;
-
-                case MotionEvent.ACTION_UP:
-
-                    break;
-
-                default:
-                    return false;
-            }
-            return true;
-        });*/
         TextView infoTv = d.findViewById(R.id.infoDialog);
         infoTv.setText(info);
         TextView getImage = d.findViewById(R.id.actionTv);
         getImage.setOnClickListener(v13 -> {
-            Toast.makeText(ProfileActivity.this, "Getting image", Toast.LENGTH_SHORT).show();
+           if (info.equals(profileInfo)) {
+               onlyImageProfile();
+           } else if (info.equals(coverInfo)) {
+               onlyImageCover();
+           }
             d.dismiss();
         });
         TextView remove = d.findViewById(R.id.removeTv);
         remove.setOnClickListener(v12 -> {
-            Toast.makeText(ProfileActivity.this, "Removed", Toast.LENGTH_SHORT).show();
+            if (info.equals(profileInfo)) {
+                if (removeProfilePhoto()) {
+                    Toast.makeText(this, "Profile Photo removed", Toast.LENGTH_SHORT).show();
+                  // todo default  profilePic.setImageResource();
+                } else {
+                    Toast.makeText(this, "Failed to remove profile photo. Try later", Toast.LENGTH_SHORT).show();
+                }
+            } else if (info.equals(coverInfo)) {
+                if (removeCoverPhoto()) {
+                    Toast.makeText(this, "Cover Photo removed", Toast.LENGTH_SHORT).show();
+                   //  todo default  user_profile_picture.setImageResource();
+                } else {
+                    Toast.makeText(this, "Failed to remove cover photo. Try later", Toast.LENGTH_SHORT).show();
+                }
+            }
             d.dismiss();
         });
         TextView cancel = d.findViewById(R.id.cancelDialog);
         cancel.setOnClickListener(v1 -> d.dismiss());
     }
+
+    private void onlyImageProfile() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Not granted", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        } else {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), profileCode);
+        }
+    }
+
+    private void onlyImageCover() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Not granted", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        } else {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), coverCode);
+        }
+    }
+
+    private boolean removeCoverPhoto () {
+        final boolean[] removed = {false};
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(USER_DB).document(FirebaseAuth.getInstance().getCurrentUser().getUid()).update(COVER_IMAGE,"").addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                System.out.println("Cover image removed");
+                removed[0] = true;
+            } else {
+                System.out.println("Cover image not removed");
+            }
+        });
+        return removed[0];
+    }
+
+    private boolean removeProfilePhoto () {
+        final boolean[] removed = {false};
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(USER_DB).document(FirebaseAuth.getInstance().getCurrentUser().getUid()).update(PROFILE_PIC,"").addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                System.out.println("Profile image removed");
+                removed[0] = true;
+            } else {
+                System.out.println("Profile image not removed");
+            }
+        });
+        return removed[0];
+    }
+
+    private void getCoverImage() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(USER_DB).document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                try {
+                    coverImageUrl = task.getResult().get(COVER_IMAGE).toString();
+                    Toast.makeText(ProfileActivity.this, "Failed to get cover image", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    profilePicUrl = task.getResult().get(PROFILE_PIC).toString();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(ProfileActivity.this, "Failed to get profile image", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(ProfileActivity.this, "Failed to get images", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 }

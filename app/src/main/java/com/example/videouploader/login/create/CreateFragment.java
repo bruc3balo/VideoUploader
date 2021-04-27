@@ -124,6 +124,8 @@ public class CreateFragment extends Fragment {
             newUser.setCreatedAt(Calendar.getInstance().getTime().toString());
             newUser.setEmailAddress(email.getText().toString());
             newUser.setUsername(name.getText().toString());
+            newUser.setProfilePic("");
+            newUser.setCoverImage("");
             valid = true;
         }
         return valid;

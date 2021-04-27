@@ -24,6 +24,11 @@ public class Models {
         public static final String CREATED_AT = "createdAt";
         public static final String CREATION_STATUS = "Creation Status";
 
+        private String profilePic;
+        public static final String PROFILE_PIC = "profilePic";
+        private String coverImage;
+        public static final String COVER_IMAGE = "coverImage";
+
         public static final int SUCCESS = 1;
         public static final int FAIL = 0;
 
@@ -61,6 +66,23 @@ public class Models {
 
         public void setCreatedAt(String createdAt) {
             this.createdAt = createdAt;
+        }
+
+
+        public String getProfilePic() {
+            return profilePic;
+        }
+
+        public void setProfilePic(String profilePic) {
+            this.profilePic = profilePic;
+        }
+
+        public String getCoverImage() {
+            return coverImage;
+        }
+
+        public void setCoverImage(String coverImage) {
+            this.coverImage = coverImage;
         }
     }
 

@@ -1,35 +1,39 @@
 package com.example.videouploader;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ClickableSpan;
+import android.text.style.TypefaceSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.example.videouploader.login.LoginActivity;
-import com.example.videouploader.utils.MyStuff;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.example.videouploader.login.LoginActivity.getUserStatus;
-import static com.example.videouploader.models.Models.User.USER_SP;
-import static com.example.videouploader.utils.MyStuff.italicString;
-import static com.example.videouploader.utils.MyStuff.underlineString;
+import static com.example.videouploader.utils.MyStuff.boldStringBuild;
+import static com.example.videouploader.utils.MyStuff.colorSpan;
+import static com.example.videouploader.utils.MyStuff.underlineStringBuild;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,19 +41,45 @@ public class MainActivity extends AppCompatActivity {
     public static final int SUCCESS_MEDIA_CODE = 3;
     public static final int PROGRESS_MEDIA_CODE = 2;
     public static final int FAIL_MEDIA_CODE = 4;
+    private Toolbar mainTitleTb;
+    private TextView noPostsTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar mainTitleTb = findViewById(R.id.mainTitleTb);
-        SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
-        mainTitleTb.setTitle(underlineString(getResources().getString(R.string.app_name)));
+        mainTitleTb = findViewById(R.id.mainTitleTb);
+        noPostsTv = findViewById(R.id.noPostsTv);
+        // Typeface font = Typeface.createFromAsset(getAssets(), R.font.bebas_neue_regular);
+        TypefaceSpan typefaceSpan = new TypefaceSpan("roboto.ttf");
+
+
+        SpannableStringBuilder s = new SpannableStringBuilder(getResources().getString(R.string.app_name));
+        // s.setSpan(new CustomTypefaceSpan(font),0,s.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        s.setSpan(typefaceSpan, 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mainTitleTb.setTitle(colorSpan(boldStringBuild(underlineStringBuild(s)),getResources().getColor(R.color.Gulf_Blue)));
         setSupportActionBar(mainTitleTb);
+        //todo add tags
 
         backPressed = false;
     }
+
+    private SpannableString clickString(SpannableStringBuilder s) {
+        SpannableString clickSpan = new SpannableString(s);
+        clickSpan.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View widget) {
+                for (int i = 0; i < 4   ; i++) {
+
+                }
+            }
+        }, 0, s.length(), 0);
+        return clickSpan;
+    }
+
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -68,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         }).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
 
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -79,23 +108,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToAddPage() {
-        startActivity(new Intent(MainActivity.this,AddMedia.class));
+        startActivity(new Intent(MainActivity.this, AddMedia.class));
     }
 
-    private void goToMyProfile () {
-        startActivity(new Intent(MainActivity.this,ProfileActivity.class));
+    private void goToMyProfile() {
+        startActivity(new Intent(MainActivity.this, ProfileActivity.class));
     }
 
-    private void updateUi (FirebaseUser user) {
+    private void updateUi(FirebaseUser user) {
         if (user != null) {
-            Toast.makeText(this, "Welcome "+user.getEmail(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(MainActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
             goBackToLoginScreen();
         }
     }
 
-    private void goBackToLoginScreen () {
+    private void goBackToLoginScreen() {
         startActivity(new Intent(MainActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }

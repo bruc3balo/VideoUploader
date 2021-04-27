@@ -63,6 +63,8 @@ public class UploadMedia extends Service {
     public static final String SUCCESS = "Success";
     public static final String CANCEL = "Cancel";
 
+    public static boolean uploadingInProgress;
+
     private boolean uploadComplete = false;
 
     Models.Media media = new Models.Media("");
@@ -84,6 +86,7 @@ public class UploadMedia extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         System.out.println("Upload service started");
         makeObject(intent);
+        uploadingInProgress = true;
         return START_NOT_STICKY;
     }
 
@@ -318,6 +321,8 @@ public class UploadMedia extends Service {
     @Override
     public void onDestroy() {
         System.out.println("Upload service stopped");
+
+        uploadingInProgress = false;
 
      if (!uploadComplete) {
          System.out.println("Upload failed");

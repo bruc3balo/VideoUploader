@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 
 import com.devbrackets.android.exomedia.listener.OnPreparedListener;
@@ -47,6 +48,7 @@ import java.util.Date;
 
 import static com.example.videouploader.MainActivity.discardDialog;
 import static com.example.videouploader.login.LoginActivity.getUserSpMap;
+import static com.example.videouploader.login.LoginActivity.showSnackBar;
 import static com.example.videouploader.models.Models.Media.AVERAGE_RATING;
 import static com.example.videouploader.models.Models.Media.DESCRIPTION;
 import static com.example.videouploader.models.Models.Media.DUMMY_VIDEO;
@@ -63,12 +65,13 @@ import static com.example.videouploader.models.Models.Media.TITLE;
 import static com.example.videouploader.models.Models.Media.USERNAME;
 import static com.example.videouploader.models.Models.Media.VIEWERS;
 import static com.example.videouploader.models.Models.User.CREATED_AT;
+import static com.example.videouploader.services.UploadMedia.uploadingInProgress;
 
 public class AddMedia extends AppCompatActivity implements OnPreparedListener {
-    private static final int IMAGE_RESULT_CODE = 3;
-    private static final int STORAGE_PERMISSION_CODE = 4;
-    private static final int VIDEO_RESULT_CODE = 2;
-    private static final int MENTION_RESULT_CODE = 5;
+    public static final int IMAGE_RESULT_CODE = 3;
+    public static final int STORAGE_PERMISSION_CODE = 4;
+    public static final int VIDEO_RESULT_CODE = 2;
+    public static final int MENTION_RESULT_CODE = 5;
     private String mediaType = "";
     Models.Media media = new Models.Media(MyStuff.getMediaID(mediaType, FirebaseAuth.getInstance().getCurrentUser().getUid()));
 
@@ -77,12 +80,15 @@ public class AddMedia extends AppCompatActivity implements OnPreparedListener {
     private Uri file = null;
     private final ArrayList<String> mentionList = new ArrayList<>();
     private boolean backPressed;
+    private CoordinatorLayout addMediaCoordinator;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_media);
+
+        addMediaCoordinator = findViewById(R.id.addMediaCoordinator);
 
         Toolbar tb = findViewById(R.id.addingNewMediaTb);
         setSupportActionBar(tb);
@@ -100,7 +106,11 @@ public class AddMedia extends AppCompatActivity implements OnPreparedListener {
         Button postMtaaButton = findViewById(R.id.postMtaaButton);
         postMtaaButton.setOnClickListener(v -> {
             if (validateForm(title,descriptionField)) {
-                sendObj(media);
+                if (uploadingInProgress) {
+                    showSnackBar(addMediaCoordinator,"Another upload in progress. Please Wait");
+                } else {
+                    sendObj(media);
+                }
             }
         });
 

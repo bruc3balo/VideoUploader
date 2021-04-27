@@ -18,6 +18,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:textStyle="bold"
+
                 android:fontFamily="serif"
                 android:textSize="16sp"
                 android:drawablePadding="5dp"
@@ -36,6 +37,21 @@
             android:layout_marginEnd="2dp"
             android:elevation="2dp"
             android:background="@color/semiGray"/>
+
+        <TextView
+            android:id="@+id/noPostsTv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/bebas_neue_regular"
+            android:padding="4dp"
+            android:textSize="40sp"
+            android:text="@string/no_posts"
+            android:gravity="center"
+            android:textColor="@color/skyBlue"
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

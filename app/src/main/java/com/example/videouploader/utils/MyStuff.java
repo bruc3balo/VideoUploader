@@ -14,11 +14,13 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BulletSpan;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.SubscriptSpan;
@@ -73,6 +75,13 @@ public interface MyStuff {
         return underlined;
     }
 
+    static SpannableStringBuilder underlineStringBuild(SpannableStringBuilder s) {
+        SpannableStringBuilder underlined = new SpannableStringBuilder(s);
+        underlined.setSpan(new UnderlineSpan(), 0, s.length(), 0);
+        return underlined;
+    }
+
+
     static SpannableString strikeString(String s) {
         SpannableString stricken = new SpannableString(s);
         stricken.setSpan(new StrikethroughSpan(), 0, s.length(), 0);
@@ -85,10 +94,22 @@ public interface MyStuff {
         return boldness;
     }
 
+    static SpannableStringBuilder boldStringBuild(SpannableStringBuilder s) {
+        SpannableStringBuilder boldness = new SpannableStringBuilder(s);
+        boldness.setSpan(new StyleSpan(Typeface.BOLD), 0, s.length(), 0);
+        return boldness;
+    }
+
     static SpannableString italicString(String s) {
         SpannableString mamamia = new SpannableString(s);
         mamamia.setSpan(new StyleSpan(Typeface.ITALIC), 0, s.length(), 0);
         return mamamia;
+    }
+
+    static SpannableStringBuilder colorSpan (SpannableStringBuilder s, int color) {
+        SpannableStringBuilder colorSpan = new SpannableStringBuilder(s);
+        colorSpan.setSpan(new ForegroundColorSpan(color), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return colorSpan;
     }
 
     static SpannableString boldItalicString(String s) {

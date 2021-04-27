@@ -22,4 +22,6 @@
     <string name="discard">Discard?</string>
     <string name="friends">Friends</string>
     <string name="follow">Follow</string>
+    <string name="no_posts">No Posts</string>
+    <string name="tags">Tags</string>
 </resources>
